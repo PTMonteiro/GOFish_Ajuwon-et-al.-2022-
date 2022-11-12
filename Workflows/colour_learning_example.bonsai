@@ -14,6 +14,7 @@
                  xmlns:vid="clr-namespace:Bonsai.Video;assembly=Bonsai.Video"
                  xmlns:num="clr-namespace:Bonsai.Numerics;assembly=Bonsai.Numerics"
                  xmlns:p1="clr-namespace:Bonsai.Numerics.Distributions;assembly=Bonsai.Numerics"
+                 xmlns:p2="clr-namespace:OpenCV.Net;assembly=OpenCV.Net"
                  xmlns:gli="clr-namespace:Bonsai.Shaders.Input;assembly=Bonsai.Shaders"
                  xmlns="https://bonsai-rx.org/2018/workflow">
   <Workflow>
@@ -197,7 +198,7 @@
               </PropertyMappings>
             </Expression>
             <Expression xsi:type="io:CsvWriter">
-              <io:FileName>C:\Users\neurogears\Documents\git\PTMonteiro\GoFish_Ajuwon_etal_2022\Data\Fish1\_video_timestamp.avi</io:FileName>
+              <io:FileName>C:\Users\neurogears\Documents\git\PTMonteiro\GoFish_Ajuwon_etal_2022\Data\Fish1\_video_timestamp.csv</io:FileName>
               <io:Append>false</io:Append>
               <io:Overwrite>false</io:Overwrite>
               <io:Suffix>Timestamp</io:Suffix>
@@ -380,18 +381,16 @@
             <Expression xsi:type="rx:BehaviorSubject" TypeArguments="harp:HarpMessage">
               <rx:Name>PumpCmdLEFT</rx:Name>
             </Expression>
-            <Expression xsi:type="Disable">
-              <Builder xsi:type="Combinator">
-                <Combinator xsi:type="harp:Device">
-                  <harp:DeviceState>Active</harp:DeviceState>
-                  <harp:DumpRegisters>true</harp:DumpRegisters>
-                  <harp:LedState>On</harp:LedState>
-                  <harp:VisualIndicators>On</harp:VisualIndicators>
-                  <harp:Heartbeat>Enable</harp:Heartbeat>
-                  <harp:IgnoreErrors>false</harp:IgnoreErrors>
-                  <harp:PortName>COM7</harp:PortName>
-                </Combinator>
-              </Builder>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="harp:Device">
+                <harp:DeviceState>Active</harp:DeviceState>
+                <harp:DumpRegisters>true</harp:DumpRegisters>
+                <harp:LedState>On</harp:LedState>
+                <harp:VisualIndicators>On</harp:VisualIndicators>
+                <harp:Heartbeat>Enable</harp:Heartbeat>
+                <harp:IgnoreErrors>false</harp:IgnoreErrors>
+                <harp:PortName>COM7</harp:PortName>
+              </Combinator>
             </Expression>
             <Expression xsi:type="rx:PublishSubject">
               <Name>PumpEventsLEFT</Name>
@@ -402,18 +401,16 @@
             <Expression xsi:type="rx:BehaviorSubject" TypeArguments="harp:HarpMessage">
               <rx:Name>PumpCmdRIGHT</rx:Name>
             </Expression>
-            <Expression xsi:type="Disable">
-              <Builder xsi:type="Combinator">
-                <Combinator xsi:type="harp:Device">
-                  <harp:DeviceState>Active</harp:DeviceState>
-                  <harp:DumpRegisters>true</harp:DumpRegisters>
-                  <harp:LedState>On</harp:LedState>
-                  <harp:VisualIndicators>On</harp:VisualIndicators>
-                  <harp:Heartbeat>Enable</harp:Heartbeat>
-                  <harp:IgnoreErrors>false</harp:IgnoreErrors>
-                  <harp:PortName>COM8</harp:PortName>
-                </Combinator>
-              </Builder>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="harp:Device">
+                <harp:DeviceState>Active</harp:DeviceState>
+                <harp:DumpRegisters>true</harp:DumpRegisters>
+                <harp:LedState>On</harp:LedState>
+                <harp:VisualIndicators>On</harp:VisualIndicators>
+                <harp:Heartbeat>Enable</harp:Heartbeat>
+                <harp:IgnoreErrors>false</harp:IgnoreErrors>
+                <harp:PortName>COM8</harp:PortName>
+              </Combinator>
             </Expression>
             <Expression xsi:type="rx:PublishSubject">
               <Name>PumpEventsRIGHT</Name>
@@ -432,26 +429,37 @@
             <Expression xsi:type="MulticastSubject">
               <Name>PumpCmdRIGHT</Name>
             </Expression>
-            <Expression xsi:type="Disable">
-              <Builder xsi:type="ExternalizedMapping">
-                <Property Name="Format" />
-                <Property Name="CaptureProperties" />
-              </Builder>
+            <Expression xsi:type="ExternalizedMapping">
+              <Property Name="Format" />
+              <Property Name="CaptureProperties" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="vid:VideoCaptureDevice">
+                <vid:Index>0</vid:Index>
+                <vid:Format>
+                  <vid:FrameSize>
+                    <vid:Width>640</vid:Width>
+                    <vid:Height>480</vid:Height>
+                  </vid:FrameSize>
+                  <vid:AverageFrameRate>30</vid:AverageFrameRate>
+                  <vid:MaximumFrameRate>30</vid:MaximumFrameRate>
+                  <vid:BitCount>24</vid:BitCount>
+                </vid:Format>
+                <vid:CaptureProperties />
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="rx:PublishSubject">
+              <Name>VideoFeed</Name>
             </Expression>
             <Expression xsi:type="Disable">
               <Builder xsi:type="Combinator">
-                <Combinator xsi:type="vid:VideoCaptureDevice">
-                  <vid:Index>0</vid:Index>
-                  <vid:Format>
-                    <vid:FrameSize>
-                      <vid:Width>640</vid:Width>
-                      <vid:Height>480</vid:Height>
-                    </vid:FrameSize>
-                    <vid:AverageFrameRate>30</vid:AverageFrameRate>
-                    <vid:MaximumFrameRate>30</vid:MaximumFrameRate>
-                    <vid:BitCount>24</vid:BitCount>
-                  </vid:Format>
-                  <vid:CaptureProperties />
+                <Combinator xsi:type="cv:FileCapture">
+                  <cv:FileName>C:\Users\neurogears\Documents\git\PTMonteiro\GoFish_Ajuwon_etal_2022\Data\coco_raw_2021-08-16T13_58_50.avi</cv:FileName>
+                  <cv:PlaybackRate>0</cv:PlaybackRate>
+                  <cv:StartPosition>0</cv:StartPosition>
+                  <cv:PositionUnits>Frames</cv:PositionUnits>
+                  <cv:Loop>false</cv:Loop>
+                  <cv:Playing>true</cv:Playing>
                 </Combinator>
               </Builder>
             </Expression>
@@ -459,19 +467,6 @@
               <Builder xsi:type="rx:PublishSubject">
                 <Name>VideoFeed</Name>
               </Builder>
-            </Expression>
-            <Expression xsi:type="Combinator">
-              <Combinator xsi:type="cv:FileCapture">
-                <cv:FileName>C:\Users\neurogears\Documents\git\PTMonteiro\GoFish_Ajuwon_etal_2022\Data\coco_raw_2021-08-16T13_58_50.avi</cv:FileName>
-                <cv:PlaybackRate>0</cv:PlaybackRate>
-                <cv:StartPosition>0</cv:StartPosition>
-                <cv:PositionUnits>Frames</cv:PositionUnits>
-                <cv:Loop>false</cv:Loop>
-                <cv:Playing>true</cv:Playing>
-              </Combinator>
-            </Expression>
-            <Expression xsi:type="rx:PublishSubject">
-              <Name>VideoFeed</Name>
             </Expression>
           </Nodes>
           <Edges>
@@ -594,13 +589,25 @@
             <Expression xsi:type="rx:BehaviorSubject">
               <Name>rwdRIGHT</Name>
             </Expression>
+            <Expression xsi:type="rx:PublishSubject" TypeArguments="sys:Boolean">
+              <rx:Name>right_side_crossed</rx:Name>
+            </Expression>
+            <Expression xsi:type="rx:PublishSubject" TypeArguments="sys:Boolean">
+              <rx:Name>left_side_crossed</rx:Name>
+            </Expression>
+            <Expression xsi:type="rx:PublishSubject" TypeArguments="sys:Boolean">
+              <rx:Name>start_position_crossed</rx:Name>
+            </Expression>
+            <Expression xsi:type="rx:PublishSubject" TypeArguments="p2:Point2f">
+              <rx:Name>centroid</rx:Name>
+            </Expression>
             <Expression xsi:type="Combinator">
-              <Combinator xsi:type="IntProperty">
-                <Value>5</Value>
+              <Combinator xsi:type="DoubleProperty">
+                <Value>0</Value>
               </Combinator>
             </Expression>
-            <Expression xsi:type="rx:BehaviorSubject">
-              <Name>lastChoice</Name>
+            <Expression xsi:type="rx:PublishSubject" TypeArguments="sys:Double">
+              <rx:Name>stimLum</rx:Name>
             </Expression>
           </Nodes>
           <Edges>
@@ -616,7 +623,6 @@
             <Edge From="15" To="16" Label="Source1" />
             <Edge From="17" To="18" Label="Source1" />
             <Edge From="19" To="20" Label="Source1" />
-            <Edge From="21" To="22" Label="Source1" />
           </Edges>
         </Workflow>
       </Expression>
@@ -692,7 +698,7 @@
                       <Value>3</Value>
                     </Operand>
                   </Expression>
-                  <Expression xsi:type="rx:PublishSubject">
+                  <Expression xsi:type="MulticastSubject">
                     <Name>right_side_crossed</Name>
                   </Expression>
                   <Expression xsi:type="WorkflowOutput" />
@@ -743,7 +749,7 @@
                       <Value>3</Value>
                     </Operand>
                   </Expression>
-                  <Expression xsi:type="rx:PublishSubject">
+                  <Expression xsi:type="MulticastSubject">
                     <Name>left_side_crossed</Name>
                   </Expression>
                   <Expression xsi:type="WorkflowOutput" />
@@ -794,7 +800,7 @@
                       <Value>3</Value>
                     </Operand>
                   </Expression>
-                  <Expression xsi:type="rx:PublishSubject">
+                  <Expression xsi:type="MulticastSubject">
                     <Name>start_position_crossed</Name>
                   </Expression>
                   <Expression xsi:type="WorkflowOutput" />
@@ -854,7 +860,7 @@
                   <Expression xsi:type="Combinator">
                     <Combinator xsi:type="cv:Centroid" />
                   </Expression>
-                  <Expression xsi:type="rx:PublishSubject">
+                  <Expression xsi:type="MulticastSubject">
                     <Name>centroid</Name>
                   </Expression>
                   <Expression xsi:type="WorkflowOutput" />
@@ -899,7 +905,7 @@
                   <Expression xsi:type="MemberSelector">
                     <Selector>Val0</Selector>
                   </Expression>
-                  <Expression xsi:type="rx:PublishSubject">
+                  <Expression xsi:type="MulticastSubject">
                     <Name>stimLum</Name>
                   </Expression>
                   <Expression xsi:type="WorkflowOutput" />
@@ -932,9 +938,6 @@
         <Name>Task Control</Name>
         <Workflow>
           <Nodes>
-            <Expression xsi:type="SubscribeSubject">
-              <Name>AccumulatedRewards</Name>
-            </Expression>
             <Expression xsi:type="ExternalizedMapping">
               <Property Name="Value" DisplayName="MaxTrials" Category="MaxTrials" />
             </Expression>
@@ -952,12 +955,17 @@
                   </Expression>
                   <Expression xsi:type="Combinator">
                     <Combinator xsi:type="p1:CreateContinuousUniform">
-                      <p1:Lower>20</p1:Lower>
-                      <p1:Upper>40</p1:Upper>
+                      <p1:Lower>1</p1:Lower>
+                      <p1:Upper>2</p1:Upper>
                     </Combinator>
                   </Expression>
                   <Expression xsi:type="Combinator">
                     <Combinator xsi:type="p1:Sample" />
+                  </Expression>
+                  <Expression xsi:type="IncludeWorkflow" Path="Extensions\eventLogger.bonsai">
+                    <EventValue>-1</EventValue>
+                    <EventName>ITIon</EventName>
+                    <TargetSubject>EventsSubject</TargetSubject>
                   </Expression>
                   <Expression xsi:type="scr:ExpressionTransform">
                     <scr:Expression>TimeSpan.FromSeconds(it)</scr:Expression>
@@ -969,13 +977,20 @@
                   </Expression>
                   <Expression xsi:type="Combinator">
                     <Combinator xsi:type="gl:Timer">
-                      <gl:DueTime>PT0S</gl:DueTime>
+                      <gl:DueTime>PT1.618S</gl:DueTime>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="IncludeWorkflow" Path="Extensions\eventLogger.bonsai">
+                    <EventValue>-1</EventValue>
+                    <EventName>ITIoff</EventName>
+                    <TargetSubject>EventsSubject</TargetSubject>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="rx:Take">
+                      <rx:Count>1</rx:Count>
                     </Combinator>
                   </Expression>
                   <Expression xsi:type="WorkflowOutput" />
-                  <Expression xsi:type="IncludeWorkflow" Path="Extensions\eventLogger.bonsai">
-                    <EventValue>0</EventValue>
-                  </Expression>
                   <Expression xsi:type="SubscribeSubject">
                     <Name>Draw</Name>
                   </Expression>
@@ -989,25 +1004,18 @@
                     <ColorB>0</ColorB>
                     <ColorA>1</ColorA>
                   </Expression>
-                  <Expression xsi:type="Combinator">
-                    <Combinator xsi:type="rx:TakeUntil" />
-                  </Expression>
-                  <Expression xsi:type="IncludeWorkflow" Path="Extensions\eventLogger.bonsai">
-                    <EventValue>0</EventValue>
-                  </Expression>
                 </Nodes>
                 <Edges>
                   <Edge From="0" To="1" Label="Source1" />
                   <Edge From="1" To="2" Label="Source1" />
                   <Edge From="2" To="3" Label="Source1" />
-                  <Edge From="2" To="11" Label="Source1" />
                   <Edge From="3" To="4" Label="Source1" />
                   <Edge From="4" To="5" Label="Source1" />
                   <Edge From="5" To="6" Label="Source1" />
-                  <Edge From="5" To="7" Label="Source1" />
-                  <Edge From="5" To="10" Label="Source2" />
+                  <Edge From="6" To="7" Label="Source1" />
+                  <Edge From="7" To="8" Label="Source1" />
                   <Edge From="8" To="9" Label="Source1" />
-                  <Edge From="9" To="10" Label="Source1" />
+                  <Edge From="10" To="11" Label="Source1" />
                 </Edges>
               </Workflow>
             </Expression>
@@ -1028,7 +1036,7 @@
                   </Expression>
                   <Expression xsi:type="Index">
                     <Operand xsi:type="IntProperty">
-                      <Value>10</Value>
+                      <Value>2</Value>
                     </Operand>
                   </Expression>
                   <Expression xsi:type="scr:ExpressionTransform">
@@ -1158,6 +1166,16 @@ it.Item5 as rwd_right
                   <Expression xsi:type="SubscribeSubject">
                     <Name>trialType</Name>
                   </Expression>
+                  <Expression xsi:type="InputMapping">
+                    <PropertyMappings>
+                      <Property Name="EventValue" Selector="it" />
+                    </PropertyMappings>
+                  </Expression>
+                  <Expression xsi:type="IncludeWorkflow" Path="Extensions\eventLogger.bonsai">
+                    <EventValue>2</EventValue>
+                    <EventName>trialInit</EventName>
+                    <TargetSubject>EventsSubject</TargetSubject>
+                  </Expression>
                   <Expression xsi:type="rx:Condition">
                     <Name>isBOTH</Name>
                     <Description />
@@ -1247,21 +1265,6 @@ it.Item5 as rwd_right
                             <rx:Count>1</rx:Count>
                           </Combinator>
                         </Expression>
-                        <Expression xsi:type="rx:PublishSubject">
-                          <Name>TrialResponse</Name>
-                        </Expression>
-                        <Expression xsi:type="Disable">
-                          <Builder xsi:type="PropertyMapping">
-                            <PropertyMappings>
-                              <Property Name="EventValue" />
-                            </PropertyMappings>
-                          </Builder>
-                        </Expression>
-                        <Expression xsi:type="Disable">
-                          <Builder xsi:type="IncludeWorkflow" Path="Extensions\eventLogger.bonsai">
-                            <EventValue>0</EventValue>
-                          </Builder>
-                        </Expression>
                         <Expression xsi:type="WorkflowOutput" />
                         <Expression xsi:type="SubscribeSubject">
                           <Name>stimLEFT</Name>
@@ -1298,6 +1301,16 @@ it.Item5 as rwd_right
                               <Edge From="4" To="5" Label="Source1" />
                             </Edges>
                           </Workflow>
+                        </Expression>
+                        <Expression xsi:type="InputMapping">
+                          <PropertyMappings>
+                            <Property Name="EventValue" Selector="it" />
+                          </PropertyMappings>
+                        </Expression>
+                        <Expression xsi:type="IncludeWorkflow" Path="Extensions\eventLogger.bonsai">
+                          <EventValue>4</EventValue>
+                          <EventName>stimLeft</EventName>
+                          <TargetSubject>EventsSubject</TargetSubject>
                         </Expression>
                         <Expression xsi:type="rx:SelectMany">
                           <Name>DrawStimLeft</Name>
@@ -1445,18 +1458,6 @@ it.Item5 as rwd_right
                               <Expression xsi:type="rx:AsyncSubject">
                                 <Name>StimColor</Name>
                               </Expression>
-                              <Expression xsi:type="Disable">
-                                <Builder xsi:type="PropertyMapping">
-                                  <PropertyMappings>
-                                    <Property Name="EventValue" />
-                                  </PropertyMappings>
-                                </Builder>
-                              </Expression>
-                              <Expression xsi:type="Disable">
-                                <Builder xsi:type="IncludeWorkflow" Path="Extensions\eventLogger.bonsai">
-                                  <EventValue>0</EventValue>
-                                </Builder>
-                              </Expression>
                               <Expression xsi:type="SubscribeSubject">
                                 <Name>Draw</Name>
                               </Expression>
@@ -1476,9 +1477,9 @@ it.Item5 as rwd_right
                                 <LocationY>-0.7</LocationY>
                                 <Layer>0</Layer>
                                 <Diameter>0.2</Diameter>
-                                <ColorR>1</ColorR>
+                                <ColorR>0</ColorR>
                                 <ColorG>1</ColorG>
-                                <ColorB>1</ColorB>
+                                <ColorB>0</ColorB>
                                 <ColorA>1</ColorA>
                               </Expression>
                             </Nodes>
@@ -1487,7 +1488,6 @@ it.Item5 as rwd_right
                               <Edge From="0" To="3" Label="Source1" />
                               <Edge From="0" To="5" Label="Source1" />
                               <Edge From="0" To="7" Label="Source1" />
-                              <Edge From="0" To="13" Label="Source1" />
                               <Edge From="1" To="2" Label="Source1" />
                               <Edge From="2" To="9" Label="Source1" />
                               <Edge From="3" To="4" Label="Source1" />
@@ -1498,10 +1498,9 @@ it.Item5 as rwd_right
                               <Edge From="8" To="9" Label="Source4" />
                               <Edge From="9" To="10" Label="Source1" />
                               <Edge From="10" To="11" Label="Source1" />
-                              <Edge From="12" To="13" Label="Source2" />
-                              <Edge From="14" To="17" Label="Source1" />
-                              <Edge From="15" To="16" Label="Source1" />
-                              <Edge From="16" To="17" Label="Source2" />
+                              <Edge From="12" To="15" Label="Source1" />
+                              <Edge From="13" To="14" Label="Source1" />
+                              <Edge From="14" To="15" Label="Source2" />
                             </Edges>
                           </Workflow>
                         </Expression>
@@ -1540,6 +1539,16 @@ it.Item5 as rwd_right
                               <Edge From="4" To="5" Label="Source1" />
                             </Edges>
                           </Workflow>
+                        </Expression>
+                        <Expression xsi:type="InputMapping">
+                          <PropertyMappings>
+                            <Property Name="EventValue" Selector="it" />
+                          </PropertyMappings>
+                        </Expression>
+                        <Expression xsi:type="IncludeWorkflow" Path="Extensions\eventLogger.bonsai">
+                          <EventValue>3</EventValue>
+                          <EventName>stimRIGHT</EventName>
+                          <TargetSubject>EventsSubject</TargetSubject>
                         </Expression>
                         <Expression xsi:type="rx:SelectMany">
                           <Name>DrawStimRight</Name>
@@ -1687,18 +1696,6 @@ it.Item5 as rwd_right
                               <Expression xsi:type="rx:AsyncSubject">
                                 <Name>StimColor</Name>
                               </Expression>
-                              <Expression xsi:type="Disable">
-                                <Builder xsi:type="PropertyMapping">
-                                  <PropertyMappings>
-                                    <Property Name="EventValue" />
-                                  </PropertyMappings>
-                                </Builder>
-                              </Expression>
-                              <Expression xsi:type="Disable">
-                                <Builder xsi:type="IncludeWorkflow" Path="Extensions\eventLogger.bonsai">
-                                  <EventValue>0</EventValue>
-                                </Builder>
-                              </Expression>
                               <Expression xsi:type="SubscribeSubject">
                                 <Name>Draw</Name>
                               </Expression>
@@ -1718,9 +1715,9 @@ it.Item5 as rwd_right
                                 <LocationY>-0.7</LocationY>
                                 <Layer>0</Layer>
                                 <Diameter>0.2</Diameter>
-                                <ColorR>0</ColorR>
+                                <ColorR>1</ColorR>
                                 <ColorG>1</ColorG>
-                                <ColorB>0</ColorB>
+                                <ColorB>1</ColorB>
                                 <ColorA>1</ColorA>
                               </Expression>
                             </Nodes>
@@ -1729,7 +1726,6 @@ it.Item5 as rwd_right
                               <Edge From="0" To="3" Label="Source1" />
                               <Edge From="0" To="5" Label="Source1" />
                               <Edge From="0" To="7" Label="Source1" />
-                              <Edge From="0" To="13" Label="Source1" />
                               <Edge From="1" To="2" Label="Source1" />
                               <Edge From="2" To="9" Label="Source1" />
                               <Edge From="3" To="4" Label="Source1" />
@@ -1740,10 +1736,9 @@ it.Item5 as rwd_right
                               <Edge From="8" To="9" Label="Source4" />
                               <Edge From="9" To="10" Label="Source1" />
                               <Edge From="10" To="11" Label="Source1" />
-                              <Edge From="12" To="13" Label="Source2" />
-                              <Edge From="14" To="17" Label="Source1" />
-                              <Edge From="15" To="16" Label="Source1" />
-                              <Edge From="16" To="17" Label="Source2" />
+                              <Edge From="12" To="15" Label="Source1" />
+                              <Edge From="13" To="14" Label="Source1" />
+                              <Edge From="14" To="15" Label="Source2" />
                             </Edges>
                           </Workflow>
                         </Expression>
@@ -1758,13 +1753,14 @@ it.Item5 as rwd_right
                         <Edge From="7" To="8" Label="Source2" />
                         <Edge From="8" To="9" Label="Source1" />
                         <Edge From="9" To="10" Label="Source1" />
-                        <Edge From="10" To="12" Label="Source1" />
-                        <Edge From="11" To="12" Label="Source2" />
+                        <Edge From="11" To="12" Label="Source1" />
                         <Edge From="12" To="13" Label="Source1" />
+                        <Edge From="13" To="14" Label="Source1" />
                         <Edge From="14" To="15" Label="Source1" />
-                        <Edge From="15" To="16" Label="Source1" />
+                        <Edge From="16" To="17" Label="Source1" />
                         <Edge From="17" To="18" Label="Source1" />
                         <Edge From="18" To="19" Label="Source1" />
+                        <Edge From="19" To="20" Label="Source1" />
                       </Edges>
                     </Workflow>
                   </Expression>
@@ -1788,34 +1784,15 @@ it.Item5 as rwd_right
                       </Edges>
                     </Workflow>
                   </Expression>
-                  <Expression xsi:type="Combinator">
-                    <Combinator xsi:type="BooleanProperty">
-                      <Value>true</Value>
-                    </Combinator>
+                  <Expression xsi:type="InputMapping">
+                    <PropertyMappings>
+                      <Property Name="EventValue" Selector="it" />
+                    </PropertyMappings>
                   </Expression>
-                  <Expression xsi:type="rx:Sink">
-                    <Name>updateChoice</Name>
-                    <Workflow>
-                      <Nodes>
-                        <Expression xsi:type="WorkflowInput">
-                          <Name>Source1</Name>
-                        </Expression>
-                        <Expression xsi:type="Combinator">
-                          <Combinator xsi:type="IntProperty">
-                            <Value>0</Value>
-                          </Combinator>
-                        </Expression>
-                        <Expression xsi:type="MulticastSubject">
-                          <Name>lastChoice</Name>
-                        </Expression>
-                        <Expression xsi:type="WorkflowOutput" />
-                      </Nodes>
-                      <Edges>
-                        <Edge From="0" To="1" Label="Source1" />
-                        <Edge From="1" To="2" Label="Source1" />
-                        <Edge From="2" To="3" Label="Source1" />
-                      </Edges>
-                    </Workflow>
+                  <Expression xsi:type="IncludeWorkflow" Path="Extensions\eventLogger.bonsai">
+                    <EventValue>0</EventValue>
+                    <EventName>choiceLEFT</EventName>
+                    <TargetSubject>EventsSubject</TargetSubject>
                   </Expression>
                   <Expression xsi:type="rx:Condition">
                     <Name>choseRIGHT</Name>
@@ -1837,34 +1814,15 @@ it.Item5 as rwd_right
                       </Edges>
                     </Workflow>
                   </Expression>
-                  <Expression xsi:type="Combinator">
-                    <Combinator xsi:type="BooleanProperty">
-                      <Value>true</Value>
-                    </Combinator>
+                  <Expression xsi:type="InputMapping">
+                    <PropertyMappings>
+                      <Property Name="EventValue" Selector="it" />
+                    </PropertyMappings>
                   </Expression>
-                  <Expression xsi:type="rx:Sink">
-                    <Name>updateChoice</Name>
-                    <Workflow>
-                      <Nodes>
-                        <Expression xsi:type="WorkflowInput">
-                          <Name>Source1</Name>
-                        </Expression>
-                        <Expression xsi:type="Combinator">
-                          <Combinator xsi:type="IntProperty">
-                            <Value>1</Value>
-                          </Combinator>
-                        </Expression>
-                        <Expression xsi:type="MulticastSubject">
-                          <Name>lastChoice</Name>
-                        </Expression>
-                        <Expression xsi:type="WorkflowOutput" />
-                      </Nodes>
-                      <Edges>
-                        <Edge From="0" To="1" Label="Source1" />
-                        <Edge From="1" To="2" Label="Source1" />
-                        <Edge From="2" To="3" Label="Source1" />
-                      </Edges>
-                    </Workflow>
+                  <Expression xsi:type="IncludeWorkflow" Path="Extensions\eventLogger.bonsai">
+                    <EventValue>-1</EventValue>
+                    <EventName>choiceRight</EventName>
+                    <TargetSubject>EventsSubject</TargetSubject>
                   </Expression>
                   <Expression xsi:type="rx:Condition">
                     <Name>noCHOICE</Name>
@@ -1886,10 +1844,15 @@ it.Item5 as rwd_right
                       </Edges>
                     </Workflow>
                   </Expression>
-                  <Expression xsi:type="Combinator">
-                    <Combinator xsi:type="BooleanProperty">
-                      <Value>true</Value>
-                    </Combinator>
+                  <Expression xsi:type="InputMapping">
+                    <PropertyMappings>
+                      <Property Name="EventValue" Selector="it" />
+                    </PropertyMappings>
+                  </Expression>
+                  <Expression xsi:type="IncludeWorkflow" Path="Extensions\eventLogger.bonsai">
+                    <EventValue>-1</EventValue>
+                    <EventName>choiceDeadline</EventName>
+                    <TargetSubject>EventsSubject</TargetSubject>
                   </Expression>
                   <Expression xsi:type="Combinator">
                     <Combinator xsi:type="rx:Merge" />
@@ -1900,33 +1863,26 @@ it.Item5 as rwd_right
                     </Combinator>
                   </Expression>
                   <Expression xsi:type="WorkflowOutput" />
-                  <Expression xsi:type="InputMapping">
-                    <PropertyMappings>
-                      <Property Name="EventValue" Selector="it" />
-                    </PropertyMappings>
-                  </Expression>
-                  <Expression xsi:type="IncludeWorkflow" Path="Extensions\eventLogger.bonsai">
-                    <EventValue>2</EventValue>
-                  </Expression>
                 </Nodes>
                 <Edges>
                   <Edge From="0" To="1" Label="Source1" />
-                  <Edge From="0" To="14" Label="Source2" />
                   <Edge From="1" To="2" Label="Source1" />
                   <Edge From="2" To="3" Label="Source1" />
-                  <Edge From="2" To="6" Label="Source1" />
-                  <Edge From="2" To="9" Label="Source1" />
                   <Edge From="3" To="4" Label="Source1" />
                   <Edge From="4" To="5" Label="Source1" />
-                  <Edge From="5" To="11" Label="Source1" />
+                  <Edge From="4" To="8" Label="Source1" />
+                  <Edge From="4" To="11" Label="Source1" />
+                  <Edge From="5" To="6" Label="Source1" />
                   <Edge From="6" To="7" Label="Source1" />
-                  <Edge From="7" To="8" Label="Source1" />
-                  <Edge From="8" To="11" Label="Source2" />
+                  <Edge From="7" To="14" Label="Source1" />
+                  <Edge From="8" To="9" Label="Source1" />
                   <Edge From="9" To="10" Label="Source1" />
-                  <Edge From="10" To="11" Label="Source3" />
+                  <Edge From="10" To="14" Label="Source2" />
                   <Edge From="11" To="12" Label="Source1" />
                   <Edge From="12" To="13" Label="Source1" />
+                  <Edge From="13" To="14" Label="Source3" />
                   <Edge From="14" To="15" Label="Source1" />
+                  <Edge From="15" To="16" Label="Source1" />
                 </Edges>
               </Workflow>
             </Expression>
@@ -1937,28 +1893,44 @@ it.Item5 as rwd_right
                   <Expression xsi:type="WorkflowInput">
                     <Name>Source1</Name>
                   </Expression>
+                  <Expression xsi:type="Equal">
+                    <Operand xsi:type="IntProperty">
+                      <Value>-1</Value>
+                    </Operand>
+                  </Expression>
+                  <Expression xsi:type="BitwiseNot" />
                   <Expression xsi:type="WorkflowOutput" />
                 </Nodes>
                 <Edges>
                   <Edge From="0" To="1" Label="Source1" />
+                  <Edge From="1" To="2" Label="Source1" />
+                  <Edge From="2" To="3" Label="Source1" />
                 </Edges>
               </Workflow>
             </Expression>
-            <Expression xsi:type="rx:Sink">
+            <Expression xsi:type="rx:SelectMany">
               <Name>Food_delivery</Name>
               <Workflow>
                 <Nodes>
                   <Expression xsi:type="WorkflowInput">
                     <Name>Source1</Name>
                   </Expression>
-                  <Expression xsi:type="SubscribeSubject">
-                    <Name>lastChoice</Name>
-                  </Expression>
                   <Expression xsi:type="Combinator">
-                    <Combinator xsi:type="rx:WithLatestFrom" />
+                    <Combinator xsi:type="rx:Take">
+                      <rx:Count>1</rx:Count>
+                    </Combinator>
                   </Expression>
-                  <Expression xsi:type="MemberSelector">
-                    <Selector>Item2</Selector>
+                  <Expression xsi:type="rx:AsyncSubject">
+                    <Name>choice</Name>
+                  </Expression>
+                  <Expression xsi:type="SubscribeSubject">
+                    <Name>rwdLEFT</Name>
+                  </Expression>
+                  <Expression xsi:type="SubscribeSubject">
+                    <Name>rwdRIGHT</Name>
+                  </Expression>
+                  <Expression xsi:type="SubscribeSubject">
+                    <Name>choice</Name>
                   </Expression>
                   <Expression xsi:type="rx:Condition">
                     <Name>isLEFT</Name>
@@ -1979,9 +1951,6 @@ it.Item5 as rwd_right
                         <Edge From="1" To="2" Label="Source1" />
                       </Edges>
                     </Workflow>
-                  </Expression>
-                  <Expression xsi:type="SubscribeSubject">
-                    <Name>rwdLEFT</Name>
                   </Expression>
                   <Expression xsi:type="Combinator">
                     <Combinator xsi:type="rx:WithLatestFrom" />
@@ -2009,6 +1978,16 @@ it.Item5 as rwd_right
                       </Edges>
                     </Workflow>
                   </Expression>
+                  <Expression xsi:type="InputMapping">
+                    <PropertyMappings>
+                      <Property Name="EventValue" Selector="it" />
+                    </PropertyMappings>
+                  </Expression>
+                  <Expression xsi:type="IncludeWorkflow" Path="Extensions\eventLogger.bonsai">
+                    <EventValue>1</EventValue>
+                    <EventName>foodLEFT</EventName>
+                    <TargetSubject>EventsSubject</TargetSubject>
+                  </Expression>
                   <Expression xsi:type="Combinator">
                     <Combinator xsi:type="BooleanProperty">
                       <Value>true</Value>
@@ -2022,16 +2001,8 @@ it.Item5 as rwd_right
                   </Expression>
                   <Expression xsi:type="Combinator">
                     <Combinator xsi:type="IntProperty">
-                      <Value>1</Value>
+                      <Value>0</Value>
                     </Combinator>
-                  </Expression>
-                  <Expression xsi:type="PropertyMapping">
-                    <PropertyMappings>
-                      <Property Name="EventValue" />
-                    </PropertyMappings>
-                  </Expression>
-                  <Expression xsi:type="IncludeWorkflow" Path="Extensions\eventLogger.bonsai">
-                    <EventValue>1</EventValue>
                   </Expression>
                   <Expression xsi:type="rx:Condition">
                     <Name>noFOOD</Name>
@@ -2060,6 +2031,16 @@ it.Item5 as rwd_right
                   </Expression>
                   <Expression xsi:type="IncludeWorkflow" Path="Extensions\eventLogger.bonsai">
                     <EventValue>0</EventValue>
+                    <EventName>foodLEFT</EventName>
+                    <TargetSubject>EventsSubject</TargetSubject>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="IntProperty">
+                      <Value>0</Value>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="SubscribeSubject">
+                    <Name>choice</Name>
                   </Expression>
                   <Expression xsi:type="rx:Condition">
                     <Name>isRIGHT</Name>
@@ -2082,9 +2063,6 @@ it.Item5 as rwd_right
                       </Edges>
                     </Workflow>
                   </Expression>
-                  <Expression xsi:type="SubscribeSubject">
-                    <Name>rwdRIGHT</Name>
-                  </Expression>
                   <Expression xsi:type="Combinator">
                     <Combinator xsi:type="rx:WithLatestFrom" />
                   </Expression>
@@ -2111,6 +2089,16 @@ it.Item5 as rwd_right
                       </Edges>
                     </Workflow>
                   </Expression>
+                  <Expression xsi:type="InputMapping">
+                    <PropertyMappings>
+                      <Property Name="EventValue" Selector="it" />
+                    </PropertyMappings>
+                  </Expression>
+                  <Expression xsi:type="IncludeWorkflow" Path="Extensions\eventLogger.bonsai">
+                    <EventValue>0</EventValue>
+                    <EventName>foodRIGHT</EventName>
+                    <TargetSubject>EventsSubject</TargetSubject>
+                  </Expression>
                   <Expression xsi:type="Combinator">
                     <Combinator xsi:type="BooleanProperty">
                       <Value>true</Value>
@@ -2124,16 +2112,8 @@ it.Item5 as rwd_right
                   </Expression>
                   <Expression xsi:type="Combinator">
                     <Combinator xsi:type="IntProperty">
-                      <Value>1</Value>
+                      <Value>0</Value>
                     </Combinator>
-                  </Expression>
-                  <Expression xsi:type="PropertyMapping">
-                    <PropertyMappings>
-                      <Property Name="EventValue" />
-                    </PropertyMappings>
-                  </Expression>
-                  <Expression xsi:type="IncludeWorkflow" Path="Extensions\eventLogger.bonsai">
-                    <EventValue>0</EventValue>
                   </Expression>
                   <Expression xsi:type="rx:Condition">
                     <Name>noFOOD</Name>
@@ -2162,54 +2142,75 @@ it.Item5 as rwd_right
                   </Expression>
                   <Expression xsi:type="IncludeWorkflow" Path="Extensions\eventLogger.bonsai">
                     <EventValue>0</EventValue>
+                    <EventName>foodRIGHT</EventName>
+                    <TargetSubject>EventsSubject</TargetSubject>
                   </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="IntProperty">
+                      <Value>0</Value>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="rx:Merge" />
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="rx:Take">
+                      <rx:Count>1</rx:Count>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="WorkflowOutput" />
                 </Nodes>
                 <Edges>
-                  <Edge From="0" To="2" Label="Source1" />
-                  <Edge From="1" To="2" Label="Source2" />
-                  <Edge From="2" To="3" Label="Source1" />
-                  <Edge From="3" To="4" Label="Source1" />
-                  <Edge From="3" To="18" Label="Source1" />
-                  <Edge From="4" To="6" Label="Source1" />
-                  <Edge From="5" To="6" Label="Source2" />
+                  <Edge From="0" To="1" Label="Source1" />
+                  <Edge From="1" To="2" Label="Source1" />
+                  <Edge From="3" To="7" Label="Source2" />
+                  <Edge From="4" To="22" Label="Source2" />
+                  <Edge From="5" To="6" Label="Source1" />
                   <Edge From="6" To="7" Label="Source1" />
                   <Edge From="7" To="8" Label="Source1" />
-                  <Edge From="7" To="15" Label="Source1" />
                   <Edge From="8" To="9" Label="Source1" />
+                  <Edge From="8" To="16" Label="Source1" />
                   <Edge From="9" To="10" Label="Source1" />
-                  <Edge From="9" To="14" Label="Source1" />
-                  <Edge From="9" To="12" Label="Source1" />
                   <Edge From="10" To="11" Label="Source1" />
+                  <Edge From="11" To="12" Label="Source1" />
                   <Edge From="12" To="13" Label="Source1" />
-                  <Edge From="13" To="14" Label="Source2" />
-                  <Edge From="15" To="16" Label="Source1" />
+                  <Edge From="13" To="14" Label="Source1" />
+                  <Edge From="14" To="15" Label="Source1" />
+                  <Edge From="15" To="35" Label="Source1" />
                   <Edge From="16" To="17" Label="Source1" />
-                  <Edge From="18" To="20" Label="Source1" />
-                  <Edge From="19" To="20" Label="Source2" />
+                  <Edge From="17" To="18" Label="Source1" />
+                  <Edge From="18" To="19" Label="Source1" />
+                  <Edge From="19" To="35" Label="Source2" />
                   <Edge From="20" To="21" Label="Source1" />
                   <Edge From="21" To="22" Label="Source1" />
-                  <Edge From="21" To="29" Label="Source1" />
                   <Edge From="22" To="23" Label="Source1" />
                   <Edge From="23" To="24" Label="Source1" />
-                  <Edge From="23" To="28" Label="Source1" />
-                  <Edge From="23" To="26" Label="Source1" />
+                  <Edge From="23" To="31" Label="Source1" />
                   <Edge From="24" To="25" Label="Source1" />
+                  <Edge From="25" To="26" Label="Source1" />
                   <Edge From="26" To="27" Label="Source1" />
-                  <Edge From="27" To="28" Label="Source2" />
+                  <Edge From="27" To="28" Label="Source1" />
+                  <Edge From="28" To="29" Label="Source1" />
                   <Edge From="29" To="30" Label="Source1" />
-                  <Edge From="30" To="31" Label="Source1" />
+                  <Edge From="30" To="35" Label="Source3" />
+                  <Edge From="31" To="32" Label="Source1" />
+                  <Edge From="32" To="33" Label="Source1" />
+                  <Edge From="33" To="34" Label="Source1" />
+                  <Edge From="34" To="35" Label="Source4" />
+                  <Edge From="35" To="36" Label="Source1" />
+                  <Edge From="36" To="37" Label="Source1" />
                 </Edges>
               </Workflow>
             </Expression>
-            <Expression xsi:type="GroupWorkflow">
+            <Expression xsi:type="rx:SelectMany">
               <Name>SuccessCounter</Name>
               <Workflow>
                 <Nodes>
-                  <Expression xsi:type="WorkflowInput">
-                    <Name>Source1</Name>
-                  </Expression>
                   <Expression xsi:type="SubscribeSubject">
                     <Name>AccumulatedRewards</Name>
+                  </Expression>
+                  <Expression xsi:type="WorkflowInput">
+                    <Name>Source1</Name>
                   </Expression>
                   <Expression xsi:type="Combinator">
                     <Combinator xsi:type="rx:WithLatestFrom" />
@@ -2226,15 +2227,15 @@ it.Item5 as rwd_right
                     <Name>AccumulatedRewards</Name>
                   </Expression>
                   <Expression xsi:type="Combinator">
-                    <Combinator xsi:type="BooleanProperty">
-                      <Value>true</Value>
+                    <Combinator xsi:type="rx:Take">
+                      <rx:Count>1</rx:Count>
                     </Combinator>
                   </Expression>
                   <Expression xsi:type="WorkflowOutput" />
                 </Nodes>
                 <Edges>
-                  <Edge From="0" To="2" Label="Source1" />
-                  <Edge From="1" To="2" Label="Source2" />
+                  <Edge From="0" To="2" Label="Source2" />
+                  <Edge From="1" To="2" Label="Source1" />
                   <Edge From="2" To="3" Label="Source1" />
                   <Edge From="3" To="4" Label="Source1" />
                   <Edge From="4" To="5" Label="Source1" />
@@ -2250,7 +2251,11 @@ it.Item5 as rwd_right
                   <Expression xsi:type="WorkflowInput">
                     <Name>Source1</Name>
                   </Expression>
-                  <Expression xsi:type="BitwiseNot" />
+                  <Expression xsi:type="Equal">
+                    <Operand xsi:type="IntProperty">
+                      <Value>-1</Value>
+                    </Operand>
+                  </Expression>
                   <Expression xsi:type="WorkflowOutput" />
                 </Nodes>
                 <Edges>
@@ -2262,15 +2267,15 @@ it.Item5 as rwd_right
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="rx:Merge" />
             </Expression>
-            <Expression xsi:type="GroupWorkflow">
+            <Expression xsi:type="rx:SelectMany">
               <Name>Trial_counter</Name>
               <Workflow>
                 <Nodes>
-                  <Expression xsi:type="WorkflowInput">
-                    <Name>Source1</Name>
-                  </Expression>
                   <Expression xsi:type="SubscribeSubject">
                     <Name>TrialNumber</Name>
+                  </Expression>
+                  <Expression xsi:type="WorkflowInput">
+                    <Name>Source1</Name>
                   </Expression>
                   <Expression xsi:type="Combinator">
                     <Combinator xsi:type="rx:WithLatestFrom" />
@@ -2286,46 +2291,48 @@ it.Item5 as rwd_right
                   <Expression xsi:type="MulticastSubject">
                     <Name>TrialNumber</Name>
                   </Expression>
-                  <Expression xsi:type="WorkflowOutput" />
                   <Expression xsi:type="InputMapping">
                     <PropertyMappings>
                       <Property Name="EventValue" Selector="it" />
                     </PropertyMappings>
                   </Expression>
                   <Expression xsi:type="IncludeWorkflow" Path="Extensions\eventLogger.bonsai">
-                    <EventValue>10</EventValue>
+                    <EventValue>2</EventValue>
+                    <EventName>TrialNumber</EventName>
+                    <TargetSubject>EventsSubject</TargetSubject>
                   </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="rx:Take">
+                      <rx:Count>1</rx:Count>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="WorkflowOutput" />
                 </Nodes>
                 <Edges>
-                  <Edge From="0" To="2" Label="Source1" />
-                  <Edge From="1" To="2" Label="Source2" />
+                  <Edge From="0" To="2" Label="Source2" />
+                  <Edge From="1" To="2" Label="Source1" />
                   <Edge From="2" To="3" Label="Source1" />
                   <Edge From="3" To="4" Label="Source1" />
                   <Edge From="4" To="5" Label="Source1" />
                   <Edge From="5" To="6" Label="Source1" />
-                  <Edge From="5" To="7" Label="Source2" />
+                  <Edge From="6" To="7" Label="Source1" />
                   <Edge From="7" To="8" Label="Source1" />
+                  <Edge From="8" To="9" Label="Source1" />
                 </Edges>
               </Workflow>
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="rx:Repeat" />
             </Expression>
-            <Expression xsi:type="Combinator">
-              <Combinator xsi:type="rx:WithLatestFrom" />
-            </Expression>
-            <Expression xsi:type="MemberSelector">
-              <Selector>Item2</Selector>
-            </Expression>
             <Expression xsi:type="rx:Condition">
               <Name>check_end</Name>
               <Workflow>
                 <Nodes>
-                  <Expression xsi:type="WorkflowInput">
-                    <Name>Source1</Name>
-                  </Expression>
                   <Expression xsi:type="ExternalizedMapping">
                     <Property Name="Value" />
+                  </Expression>
+                  <Expression xsi:type="SubscribeSubject">
+                    <Name>AccumulatedRewards</Name>
                   </Expression>
                   <Expression xsi:type="Equal">
                     <Operand xsi:type="IntProperty">
@@ -2335,14 +2342,14 @@ it.Item5 as rwd_right
                   <Expression xsi:type="WorkflowOutput" />
                 </Nodes>
                 <Edges>
-                  <Edge From="0" To="2" Label="Source1" />
-                  <Edge From="1" To="2" Label="Source2" />
+                  <Edge From="0" To="2" Label="Source2" />
+                  <Edge From="1" To="2" Label="Source1" />
                   <Edge From="2" To="3" Label="Source1" />
                 </Edges>
               </Workflow>
             </Expression>
             <Expression xsi:type="Combinator">
-              <Combinator xsi:type="gl:DelaySubscription">
+              <Combinator xsi:type="gl:Delay">
                 <gl:DueTime>PT0S</gl:DueTime>
               </Combinator>
             </Expression>
@@ -2352,40 +2359,25 @@ it.Item5 as rwd_right
               </Combinator>
             </Expression>
             <Expression xsi:type="WorkflowOutput" />
-            <Expression xsi:type="Combinator">
-              <Combinator xsi:type="StringProperty">
-                <Value>Null</Value>
-              </Combinator>
-            </Expression>
-            <Expression xsi:type="rx:BehaviorSubject">
-              <Name>state</Name>
-            </Expression>
-            <Expression xsi:type="SubscribeSubject">
-              <Name>state</Name>
-            </Expression>
           </Nodes>
           <Edges>
-            <Edge From="0" To="14" Label="Source2" />
-            <Edge From="1" To="16" Label="Source2" />
+            <Edge From="0" To="13" Label="Source2" />
+            <Edge From="1" To="2" Label="Source1" />
             <Edge From="2" To="3" Label="Source1" />
             <Edge From="3" To="4" Label="Source1" />
             <Edge From="4" To="5" Label="Source1" />
             <Edge From="5" To="6" Label="Source1" />
+            <Edge From="5" To="9" Label="Source1" />
             <Edge From="6" To="7" Label="Source1" />
-            <Edge From="6" To="10" Label="Source1" />
             <Edge From="7" To="8" Label="Source1" />
-            <Edge From="8" To="9" Label="Source1" />
-            <Edge From="9" To="11" Label="Source1" />
-            <Edge From="10" To="11" Label="Source2" />
+            <Edge From="8" To="10" Label="Source1" />
+            <Edge From="9" To="10" Label="Source2" />
+            <Edge From="10" To="11" Label="Source1" />
             <Edge From="11" To="12" Label="Source1" />
             <Edge From="12" To="13" Label="Source1" />
             <Edge From="13" To="14" Label="Source1" />
             <Edge From="14" To="15" Label="Source1" />
             <Edge From="15" To="16" Label="Source1" />
-            <Edge From="16" To="17" Label="Source1" />
-            <Edge From="17" To="18" Label="Source1" />
-            <Edge From="18" To="19" Label="Source1" />
-            <Edge From="20" To="21" Label="Source1" />
           </Edges>
         </Workflow>
       </Expression>
@@ -2477,20 +2469,6 @@ it.Item5 as rwd_right
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="gli:KeyDown">
-                <gli:Key>Left</gli:Key>
-                <gli:Modifiers>Control</gli:Modifiers>
-              </Combinator>
-            </Expression>
-            <Expression xsi:type="Combinator">
-              <Combinator xsi:type="BooleanProperty">
-                <Value>true</Value>
-              </Combinator>
-            </Expression>
-            <Expression xsi:type="MulticastSubject">
-              <Name>left_side_crossed</Name>
-            </Expression>
-            <Expression xsi:type="Combinator">
-              <Combinator xsi:type="gli:KeyDown">
                 <gli:Key>Right</gli:Key>
                 <gli:Modifiers>Control</gli:Modifiers>
               </Combinator>
@@ -2502,6 +2480,20 @@ it.Item5 as rwd_right
             </Expression>
             <Expression xsi:type="MulticastSubject">
               <Name>right_side_crossed</Name>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="gli:KeyDown">
+                <gli:Key>Left</gli:Key>
+                <gli:Modifiers>Control</gli:Modifiers>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="BooleanProperty">
+                <Value>true</Value>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="MulticastSubject">
+              <Name>left_side_crossed</Name>
             </Expression>
           </Nodes>
           <Edges>
