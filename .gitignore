@@ -1,0 +1,10 @@
+.vs
+bin
+obj
+Packages
+Data
+*.bin
+*.avi
+*.dll
+*.exe
+*.exe.settings
